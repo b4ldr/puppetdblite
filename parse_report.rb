@@ -11,7 +11,6 @@ def puppetdb
   db
 end
 def parse_report(db, host, report_path)
-  resources = {}
   puts "host: #{host}"
   host_id = get_host_id(db, host)
   db.execute('DELETE FROM host_resources WHERE host_id = ?', host_id)
@@ -22,8 +21,8 @@ def parse_report(db, host, report_path)
       status.containment_path.reject{|path| path.start_with?('Packages::') }.each do |path|
         next if path == 'Stage[main]' or seen.include?(path)
         seen.add(path)
-        # We have a defined type
         match = path.match(/(?<type>[^\[]+)\[?(?<title>[^\]]+)?\]?$/)
+        # We have a defined type
         if match[:title]
           type = match[:type]
           title = match[:title]
@@ -36,8 +35,7 @@ def parse_report(db, host, report_path)
         db.execute('INSERT INTO host_resources(host_id, resource_id) VALUES(?, ?)', host_id, resource_id)
       end
   end
-  resources
-end 
+end
 
 def get_host_id(db, host)
   host_id = db.get_first_value('SELECT id FROM hosts WHERE host = ?', host)
@@ -69,7 +67,7 @@ def main
     most_recent_report = Dir.glob("#{host_dir}/*.yaml").max_by {|f| File.mtime(f)}
     next unless most_recent_report
     puts "processing: #{most_recent_report}"
-    resources = parse_report(db, host, most_recent_report)
+    parse_report(db, host, most_recent_report)
   end
 end
 main
