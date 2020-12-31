@@ -14,6 +14,6 @@ SELECT hosts.host
 FROM ((hosts
 INNER JOIN host_resources on hosts.id = host_resources.host_id
 INNER JOIN resources on resources.id = host_resources.resource_id))
-WHERE resources.name = 'Motd';
+WHERE resources.name = 'Motd' and resource.type = 'Class';
 ```
 
