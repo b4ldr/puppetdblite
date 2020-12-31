@@ -15,7 +15,7 @@ def parse_report(report_path)
   resources = {}
   report_yaml = YAML.load_file(report_path)
   report_yaml.resource_statuses.each_pair do |resource, status|
-      status.containment_path.reject{|path| path.start_with?('Packages::') }.each do |path|
+      status.containment_path.each do |path|
         next if path == 'Stage[main]' or path == resource or resources.include?(path)
         _resource, title = path.split('[')
         resources[_resource] = title ? 'Define' :  'Class'
